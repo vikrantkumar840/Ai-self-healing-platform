@@ -1,0 +1,18 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: execution-monitor
+  namespace: monitoring
+  labels:
+    release: prometheus-stack  # [1] FIX: was "prometheus" — must match Helm release
+spec:
+  selector:
+    matchLabels:
+      app: execution
+  namespaceSelector:
+    matchNames:
+      - ai-self-healing
+  podMetricsEndpoints:
+    - port: http
+      path: /metrics
+      interval: 15s

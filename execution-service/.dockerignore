@@ -5,4 +5,45 @@ __pycache__/
 .env
 .git
 .gitignore
-node_modules
+node_modules__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Python virtual env
+venv/
+.venv/
+
+# Environment & secrets
+.env
+.env.*
+
+# Git
+.git
+.gitignore
+
+# Node (if any frontend)
+node_modules/
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
+
+# Docker
+Dockerfile
+docker-compose.yml
+
+# Kubernetes (optional if not needed in image)
+*.yaml
+*.yml
+
+# Tests (optional)
+tests/

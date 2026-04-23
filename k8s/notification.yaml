@@ -1,7 +1,9 @@
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: notification-service
+  name: notification
+  namespace: ai-self-healing
 spec:
   replicas: 1
   selector:
@@ -14,17 +16,46 @@ spec:
     spec:
       containers:
       - name: notification
-        image: vikrant840/notification:latest
+        image: vikrant840/ai-self-healing-notification:latest
         ports:
         - containerPort: 8000
+        # [1] FIX: removed NOTIFICATION_URL — it was pointing to itself
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 15    # [2] FIX: was 5
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 30    # [2] FIX: was 10
+          periodSeconds: 10
+          failureThreshold: 3
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: notification-service
+  name: notification
+  namespace: ai-self-healing
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "8000"
+    prometheus.io/path: "/metrics"
+  labels:
+    app: notification
 spec:
   selector:
     app: notification
   ports:
-    - port: 8000
-      targetPort: 8000
+  - name: http
+    port: 8000
+    targetPort: 8000

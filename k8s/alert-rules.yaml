@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: ai-self-healing-rules
+  namespace: monitoring
+  labels:
+    release: prometheus-stack
+    role: alert-rules
+spec:
+  groups:
+  - name: ai-alerts
+    rules:
+    - alert: AIAlertsIncreasing
+      expr: increase(ai_alerts_total[5m]) > 5
+      for: 10s
+      labels:
+        severity: critical
+      annotations:
+        summary: "AI Engine receiving alerts"
